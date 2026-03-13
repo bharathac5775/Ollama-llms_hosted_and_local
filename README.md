@@ -1,48 +1,75 @@
 # 🐳 GenAI Dockerfile Generator
 
-A GenAI-powered tool that automatically generates **optimized Dockerfiles** based on the programming language provided by the user.
+A **GenAI-powered tool** that automatically generates optimized Dockerfiles based on the programming language provided by the user.
 
-This project uses **Ollama with the Llama3 model** to generate Dockerfiles that follow containerization best practices such as smaller image sizes, proper layering, and efficient dependency management.
+This project supports **two execution modes**:
+
+* **Local LLM** using Ollama
+* **Hosted LLM** using Google Gemini API
+
+The tool helps developers quickly generate **Dockerfiles that follow container best practices**, including proper base images, dependency installation, working directories, and application execution commands.
 
 ---
 
 # 🚀 Features
 
-- Generate Dockerfiles for multiple programming languages
-- Uses **Llama3 model via Ollama**
-- Follows **Docker best practices**
-- Simple command-line interface
-- Runs completely **locally**
+* Generate Dockerfiles for multiple programming languages
+* Support for **local LLM inference (Ollama)**
+* Support for **cloud LLM inference (Gemini API)**
+* Follows **Docker best practices**
+* Simple **command-line interface**
+* Easy to extend for more languages or models
 
 ---
 
-# 📋 Prerequisites
+# 📂 Project Structure
 
-Before running the project, install the following:
-
-## 1️⃣ Install Ollama
-
-### Linux
-```bash
-curl -fsSL https://ollama.com/install.sh | sh
+```
+ollama/
+│
+├── local-llms-ollama/
+│   ├── generate_dockerfile.py
+│   ├── requirements.txt
+│   └── .gitignore
+│
+├── hosted-llm-gemini/
+│   ├── generate_dockerfile_gemini.py
+│   ├── requirements.txt
+│   ├── .env
+│   └── .gitignore
+│
+└── README.md
 ```
 
+---
+
+# 🖥️ Mode 1 — Local LLM (Ollama)
+
+Generate Dockerfiles using a **local model running with Ollama**.
+
+## Prerequisites
+
+Install Ollama:
+
 ### MacOS
+
 ```bash
 brew install ollama
 ```
 
----
+### Linux
 
-## 2️⃣ Start Ollama Service
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+```
+
+Start Ollama:
 
 ```bash
 ollama serve
 ```
 
----
-
-## 3️⃣ Pull the Llama3 Model
+Pull a model:
 
 ```bash
 ollama pull llama3.2:1b
@@ -50,50 +77,10 @@ ollama pull llama3.2:1b
 
 ---
 
-# ⚙️ Project Setup
-
-### 1️⃣ Clone the repository
+## Run the Tool
 
 ```bash
-git clone https://github.com/yourusername/dockerfile-generator.git
-cd dockerfile-generator
-```
-
----
-
-### 2️⃣ Create a Virtual Environment
-
-```bash
-python3 -m venv venv
-```
-
-Activate it:
-
-Linux / MacOS
-
-```bash
-source venv/bin/activate
-```
-
-Windows
-
-```bash
-.\venv\Scripts\activate
-```
-
----
-
-### 3️⃣ Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-# ▶️ Run the Application
-
-```bash
+cd local-llms-ollama
 python3 generate_dockerfile.py
 ```
 
@@ -103,51 +90,114 @@ Example:
 Enter programming language: python
 ```
 
-The tool will generate an **optimized Dockerfile** based on the selected language.
-
----
-
-# 💡 How It Works
-
-1. The user enters a programming language (Python, Node.js, Java, etc.)
-2. The script sends the prompt to the **Ollama API running locally**
-3. The **Llama3 model** generates a Dockerfile
-4. The generated Dockerfile is displayed with helpful comments
-
----
-
-# 🧪 Example Output
+Output:
 
 ```
 FROM python:3.11-slim
-
 WORKDIR /app
 COPY . .
-
-RUN pip install --no-cache-dir -r requirements.txt
-
+RUN pip install -r requirements.txt
 CMD ["python", "app.py"]
 ```
 
 ---
 
-# 🏆 Troubleshooting
+# ☁️ Mode 2 — Hosted LLM (Gemini API)
 
-- Ensure **Ollama service is running**
-- Verify the **Llama3 model is downloaded**
-- Check that **Python dependencies are installed**
+Generate Dockerfiles using **Google Gemini cloud models**.
+
+## Prerequisites
+
+Create an API key from **Google AI Studio**.
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Create `.env` file:
+
+```
+GOOGLE_API_KEY=your_api_key_here
+```
 
 ---
 
-# 📌 Future Improvements
+## Run the Tool
 
-- Support more programming languages
-- Add a **web interface**
-- Generate **multi-stage Dockerfiles**
-- Integrate with **CI/CD pipelines**
+```bash
+cd hosted-llm-gemini
+python3 generate_dockerfile_gemini.py
+```
+
+Example:
+
+```
+Enter the programming language: go
+```
+
+Output:
+
+```
+FROM golang:1.22-alpine
+WORKDIR /app
+COPY . .
+RUN go mod download
+RUN go build -o app
+CMD ["./app"]
+```
+
+---
+
+# 🔐 Security Notes
+
+* Do **not commit `.env` files** to GitHub.
+* Store API keys securely.
+* Use `.gitignore` to exclude sensitive files.
+
+Example `.gitignore`:
+
+```
+.env
+venv
+__pycache__
+```
+
+---
+
+# 📦 Requirements
+
+For Gemini version:
+
+```
+google-genai
+python-dotenv
+```
+
+For Ollama version:
+
+```
+ollama
+```
+
+---
+
+# 🛠️ Future Improvements
+
+* Support more programming languages
+* Generate **multi-stage Dockerfiles**
+* Add **web UI**
+* Implement **fallback between local and hosted models**
+* Convert tool into a reusable **CLI utility**
 
 ---
 
 # 👨‍💻 Author
 
-Developed as a **GenAI + DevOps learning project**.
+Developed as a **DevOps + AI learning project** to explore:
+
+* Local LLM inference
+* Cloud LLM APIs
+* Automated Dockerfile generation
+
